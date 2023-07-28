@@ -26,7 +26,6 @@ def displayAll(choices):
 load_dotenv('.env')
 wantedAnime: str = os.getenv('WANTED_ANIME')
 targetSite: str = os.getenv('TARGET_SITE')
-print(wantedAnime, targetSite)
 
 html_content = requests.get(targetSite+"/search.html?keyword="+wantedAnime).text
 soup = BeautifulSoup(html_content, "lxml")
