@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+import os
 from bs4 import BeautifulSoup
 import requests
 
@@ -21,9 +23,12 @@ def displayAll(choices):
     for i in choices:
         i.display()
 
-wantedAnime = "naruto"
+load_dotenv('.env')
+wantedAnime: str = os.getenv('WANTED_ANIME')
+targetSite: str = os.getenv('TARGET_SITE')
+print(wantedAnime, targetSite)
 
-html_content = requests.get("https://gogoanime3.net/search.html?keyword="+wantedAnime).text
+html_content = requests.get(targetSite+"/search.html?keyword="+wantedAnime).text
 soup = BeautifulSoup(html_content, "lxml")
 searchResults = soup.find("ul", class_="items")
 rawSources = searchResults.find_all("a")
@@ -39,14 +44,12 @@ for i in range(len(rawSources)):
 for i in range(len(sources)):
     title = sources[i].get("title")
     linkStem = sources[i].get("href")
-    seriesLink = "https://gogoanime3.net"+linkStem
+    seriesLink = targetSite+linkStem
     seriesID = linkStem.split('category/')[1]
     img = sources[i].find("img").get('src')
     releaseDate = dates[i]
     animeSeries = Anime(seriesLink,title,img,releaseDate,seriesID)
     choices.append(animeSeries)
-displayAll(choices)
-
 
     
 
