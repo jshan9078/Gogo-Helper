@@ -47,7 +47,8 @@ def displayAll(choices):
 load_dotenv('.env')
 searchRequest: str = os.getenv('WANTED_ANIME')
 targetSite: str = os.getenv('TARGET_SITE')
-selectedOption: int = os.getenv('CHOICE')
+selectedOption: str = os.getenv('CHOICE')
+selectedEpisode: str = os.getenv('EPISODE')
 
 def generateOptions(requestedAnime):
     html_content = requests.get(targetSite+"/search.html?keyword="+requestedAnime).text
@@ -84,6 +85,15 @@ def obtainMoreInfo(selectionNumber):
     choices[selectionNumber-1].summary = rawDetails[1].text[14:]
     choices[selectionNumber-1].genre = rawDetails[2].text[8:]
     choices[selectionNumber-1].status = rawDetails[4].text[9:-1]
+    choices[selectionNumber-1].detailedDisplay()
+
+def getEpisodePage(selectionNumber, episodeNumber):
+    linkToEpisode = targetSite+"/"+choices[selectionNumber-1].seriesID+"-episode-"+episodeNumber
+    html_content = requests.get(linkToEpisode).text
+    soup = BeautifulSoup(html_content,"lxml")
+    downloadSection = soup.find("li",class_="dowloads").find("a").get("href")
+    return downloadSection
+    
 
 
 
